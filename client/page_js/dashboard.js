@@ -56,10 +56,6 @@ addTaskBtn.addEventListener("click", () => {
 });
 
 taskSubmitBtn.addEventListener("click", (e) => {
-  // hideForm(newTaskForm);
-  // blurOut(navBar);
-  // blurOut(mainContent);
-
   blurIn(newTaskForm);
   confirmationAction.innerHTML = "Save";
   showForm(confirmationBox);
@@ -107,6 +103,7 @@ list_box.addEventListener("click", (e) => {
     showForm(newTaskForm);
   }
 });
+//----LIST BOX CLICK
 
 //---CONFIRMATION BOX CLICK
 confirmationOKBtn.addEventListener("click", () => {
@@ -128,6 +125,7 @@ confirmationCancelBtn.addEventListener("click", () => {
     blurOut(newTaskForm);
   }
 });
+//---CONFIRMATION BOX CLICK
 
 const _detailFormConfiguration = () => {
   titleIpt.disabled = true;
