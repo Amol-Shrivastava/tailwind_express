@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="../styles.css" rel="stylesheet" />
+    <title>LOGIN FORM</title>
+  </head>
+  <body class="bg-gray-700">
+    <h1 class="font-mono text-2xl text-orange-400 font-semibold p-4">
+      Login Form
+    </h1>
+    <div class="grid justify-center align-middle">
+      <form
+        action=""
+        id="loginForm"
+        class="bg-white flex flex-col shadow-md rounded px-4 py-8 mb-4 w-[350px]"
+      >
+        <label
+          for="email"
+          class="my-3 block text-gray-700 text-sm font-bold mb-2"
+          >Email</label
+        >
+        <input
+          type="email"
+          name="email"
+          id="emailLogIpt"
+          class="shadow appreance-none border border-red rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline mt-2 mb-6"
+          placeholder="Email"
+        />
+        <label
+          for="password"
+          class="my-3 block font-bold text-sm text-gray-700 mb-2"
+          >Password</label
+        >
+        <input
+          type="password"
+          name="password"
+          id="passwordLogIpt"
+          class="shadow appearance-none border border-red rounded w-full py-2 px-3 leading-tight focus:outline-none focus: shadow-outling mt-2 mb-6"
+          placeholder="Password"
+        />
+        <button
+          id="loginBtn"
+          type="submit"
+          class="mx-auto mt-6 block border border-gray-100 bg-orange-400 text-gray-100 font-bold font-xl hover:bg-gray-100 hover:text-orange-400 hover:border-orange-400 cursor-pointer px-3 py-2 rounded-md"
+        >
+          LOGIN
+        </button>
+      </form>
+    </div>
+    <script src="../index.js" type="module"></script>
+  </body>
+</html>
