@@ -85,15 +85,16 @@ const logOutUser = async (req, res) => {
         if (err) throw err;
       });
 
-      req.session.regenerate((err) => {
-        throw err;
-      });
-
-      res.redirect("/");
+      // req.session.regenerate((err) => {
+      //   throw err;
+      // });
     }
   } catch (error) {
     consola.error(error);
   }
+
+  res.clearCookie("connect.sid");
+  res.redirect("/");
 
   // return res
   //   .status(StatusCodes.OK)

@@ -9,6 +9,7 @@ import {
   showErrorMsg,
   suggestionErrorEl,
   removeSuggestionErrorEl,
+  navigateToPage,
 } from "./domlib.js";
 
 const verifyInputValue = (elArr, type) => {
@@ -141,14 +142,7 @@ const logoutUser = async () => {
       method: "GET",
     });
 
-    // const { success, msg } = await res.json();
-
-    // if (success) {
-    //   localStorage.removeItem("email");
-    //   localStorage.removeItem("username");
-    // }
-
-    // alert(msg);
+    navigateToPage(res.url);
   } catch (error) {
     console.log(error);
   }
