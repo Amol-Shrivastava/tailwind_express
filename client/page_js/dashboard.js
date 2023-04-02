@@ -93,6 +93,7 @@ list_box.addEventListener("click", (e) => {
   } else if (e.target.id == "delTaskBtn") {
     blurIn(navBar);
     blurIn(mainContent);
+    confirmationAction.innerHTML = "Delete";
     showForm(confirmationBox);
   } else {
     blurIn(navBar);
