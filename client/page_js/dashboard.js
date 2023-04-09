@@ -43,6 +43,7 @@ const confirmationCancelBtn = document.getElementById(
 );
 
 const task_optionsList = document.getElementById("options_list");
+let selectedItemId = null;
 
 let taskArr = null;
 
@@ -56,9 +57,12 @@ onload = async (event) => {
 
   if (success) {
     taskArr = msg;
-    taskArr.forEach((element) => {
-      createListItems(element.title);
-    });
+    // taskArr.forEach((element) => {
+    //   createListItems(element.title, element.status);
+    // });
+    for (let i = 0; i < taskArr.length; i++) {
+      createListItems(taskArr[i].title, taskArr[i]._id, taskArr[i].status);
+    }
   } else {
     alert(msg);
   }
@@ -116,6 +120,9 @@ newTaskForm.addEventListener("click", (e) => {
 
 //----LIST BOX CLICK
 list_box.addEventListener("click", (e) => {
+  let selectedItemTitle = null;
+  let selectedItem = null;
+
   if (e.target.id == "edit_task_btn") {
     blurIn(navBar);
     blurIn(mainContent);
@@ -126,11 +133,16 @@ list_box.addEventListener("click", (e) => {
     dateIpt.classList.remove("hidden");
     _showItemHandler(e, "edit");
     showForm(newTaskForm, "edit", taskSubmitBtn);
+
+    selectedItemId =
+      e.target.parentElement.parentElement.childNodes[2].innerText;
   } else if (e.target.id == "delTaskBtn") {
     blurIn(navBar);
     blurIn(mainContent);
     confirmationAction.innerHTML = "Delete";
     showForm(confirmationBox, "delete", taskSubmitBtn);
+    selectedItemId =
+      e.target.parentElement.parentElement.childNodes[2].innerText;
   } else {
     blurIn(navBar);
     blurIn(mainContent);
@@ -139,6 +151,7 @@ list_box.addEventListener("click", (e) => {
     _detailFormConfiguration();
     _showItemHandler(e, "display");
     showForm(newTaskForm);
+    selectedItemId = e.target.childNodes[2].innerText;
   }
 });
 //----LIST BOX CLICK
@@ -152,9 +165,20 @@ confirmationOKBtn.addEventListener("click", () => {
   const submitAction = taskSubmitBtn.value;
 
   if (submitAction == "add") {
-    _postNewTask("http://localhost:4000/tasks/create");
+    _postNewTask("http://localhost:4000/tasks/create", "POST");
   } else if (submitAction == "edit") {
+    console.log(selectedItemId);
+    _postNewTask(
+      `http://localhost:4000/tasks/update/${selectedItemId}`,
+      "PATCH"
+    );
+    location.reload();
   } else {
+    _postNewTask(
+      `http://localhost:4000/tasks/delete/${selectedItemId}`,
+      "DELETE"
+    );
+    location.reload();
   }
 
   hideForm(confirmationBox);
@@ -204,7 +228,8 @@ const _editFormConfiguration = () => {
 
 //CALL API
 
-const _postNewTask = async (url) => {
+const _postNewTask = async (url, METHOD) => {
+  let options = null;
   const formVal = {
     title: titleIpt.value,
     description: descIpt.value,
@@ -214,14 +239,20 @@ const _postNewTask = async (url) => {
       : statusIpt.value,
   };
 
-  const options = {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application.json",
-    },
-    body: JSON.stringify(formVal),
-  };
+  if (METHOD != "DELETE") {
+    options = {
+      method: METHOD,
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application.json",
+      },
+      body: JSON.stringify(formVal),
+    };
+  } else {
+    options = {
+      method: METHOD,
+    };
+  }
 
   try {
     const res = await apiCall(url, options);
@@ -241,17 +272,18 @@ const _loadAllList = async () => {
 };
 
 const _showItemHandler = (e, action) => {
-  let selectedListTitle = e.target.innerText.replace("\n", "").split(" ")[0];
-  if (action == "edit") {
-    selectedListTitle = e.srcElement.parentElement.parentElement.innerText
-      .replace("\n", "")
-      .split(" ")[0];
+  if (e.target.id == "edit_task_btn" || e.target.id == "delTaskBtn") {
+    selectedItemId =
+      e.target.parentElement.parentElement.childNodes[2].innerText;
+  } else {
+    selectedItemId = e.target.childNodes[2].innerText;
   }
 
-  const selectedItem = taskArr.find((el) => (el.title = selectedListTitle));
+  const selectedItem = taskArr.find((el) => el._id == selectedItemId);
 
   titleIpt.value = selectedItem.title;
   descIpt.value = selectedItem.description;
+  task_status_selected.innerText = selectedItem.status;
   statusIpt.value = selectedItem.status;
   if (action == "display") {
     const dateVal = selectedItem.completionDate.replace("T", " ").split(" ")[0];

@@ -85,13 +85,11 @@ const updateTask = async (req, res) => {
         .status(StatusCodes.NOT_FOUND)
         .json({ success: false, msg: "No Task found" });
     } else {
-      const updatedTask = new Tasks({
-        title,
-        description,
-        completionDate,
-        status,
-      });
-      await updatedTask.save();
+      task.title = title;
+      task.description = description;
+      task.status = status;
+      task.completionDate = completionDate;
+      await task.save();
       return res
         .status(StatusCodes.OK)
         .json({ success: true, msg: `Task updated Successfully` });
@@ -107,7 +105,7 @@ const deleteTasks = async (req, res) => {
   const { id: taskId } = req.params;
 
   try {
-    await Tasks.findByIdDelete(taskId);
+    await Tasks.findByIdAndDelete(taskId);
     return res
       .status(StatusCodes.OK)
       .json({ success: true, msg: "Task successfully deleted" });

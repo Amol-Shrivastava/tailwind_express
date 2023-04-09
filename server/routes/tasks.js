@@ -12,7 +12,7 @@ router
   .get("/", findAllTasks)
   .post("/create", createTask)
   .get("/:value/:userId", findTasks)
-  .patch("update/:id", updateTask)
-  .delete("delete/:id", deleteTasks);
+  .patch("/update/:id", updateTask)
+  .delete("/delete/:id", deleteTasks);
 
 module.exports = router;
