@@ -1,3 +1,5 @@
 const navigateToUrl = async (url, options) => await fetch(url, options);
 
-export { navigateToUrl };
+const apiCall = async (url, options) => await fetch(url, options);
+
+export { navigateToUrl, apiCall };

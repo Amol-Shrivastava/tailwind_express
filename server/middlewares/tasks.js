@@ -2,13 +2,13 @@ const { StatusCodes } = require("http-status-codes");
 const Tasks = require("../model/tasks");
 
 const createTask = async (req, res) => {
-  const { description, completionDate, status, userId } = req.body;
+  const { title, description, completionDate, status } = req.body;
   const newTask = new Tasks({
     title,
     description,
     completionDate,
     status,
-    userId,
+    userId: req.session.userId,
   });
   try {
     await newTask.save();
@@ -23,15 +23,24 @@ const createTask = async (req, res) => {
 };
 
 const findAllTasks = async (req, res) => {
-  const { userId } = req.params;
+  const userId = req.session.userId;
   try {
-    const tasksArr = await Tasks.find({ userId }).sort({ createdAt: -1 });
-    if (tasksArr.length > 0) {
-      return res.status(StatusCodes.OK).json({ success: true, msg: tasksArr });
+    if (userId) {
+      const tasksArr = await Tasks.find({ userId }).sort({ createdAt: -1 });
+      if (tasksArr.length > 0) {
+        return res
+          .status(StatusCodes.OK)
+          .json({ success: true, msg: tasksArr });
+      } else {
+        return res.status(StatusCodes.NOT_FOUND).json({
+          success: false,
+          msg: `There are no tasks. Hurry up Add some tasks!!!!!!!`,
+        });
+      }
     } else {
-      return res.status(StatusCodes.NOT_FOUND).json({
+      return res.status(StatusCodes.UNAUTHORIZED).json({
         success: false,
-        msg: `There are no tasks. Hurry up Add some tasks!!!!!!!`,
+        msg: `Please login again to see the tasks list`,
       });
     }
   } catch (error) {

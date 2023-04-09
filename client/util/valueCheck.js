@@ -1,3 +1,5 @@
+// const moment = require("moment");
+
 const checkNull = (value) => (value == "" ? true : false);
 
 const checkSameString = (str1, str2) => str1 === str2;
@@ -18,4 +20,20 @@ const dateFormation = () =>
   "-" +
   new Date().getDate();
 
-export { checkNull, checkSameString, checkEmail, checkLength, dateFormation };
+const clearForm = (el) => {
+  el.forEach((el) => (el.innerHTML = null));
+};
+
+const formatDate = (date) => {
+  return date.toString();
+};
+
+export {
+  checkNull,
+  checkSameString,
+  checkEmail,
+  checkLength,
+  dateFormation,
+  clearForm,
+  formatDate,
+};

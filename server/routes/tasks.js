@@ -9,8 +9,8 @@ const {
 const router = require("express").Router();
 
 router
-  .get("/:userId", findAllTasks)
-  .post("create", createTask)
+  .get("/", findAllTasks)
+  .post("/create", createTask)
   .get("/:value/:userId", findTasks)
   .patch("update/:id", updateTask)
   .delete("delete/:id", deleteTasks);
