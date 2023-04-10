@@ -303,6 +303,7 @@ const _showItemHandler = (e, action) => {
       .toLocaleDateString()
       .split("/")
       .reverse();
+    dateArr[1] = dateArr[1].length == 1 ? "0" + dateArr[1] : dateArr[1];
     dateArr[2] = dateArr[2].length == 1 ? "0" + dateArr[2] : dateArr[2];
     let dateVal = dateArr.join("-");
     let timeArr = new Date(selectedItem.completionDate)
@@ -310,6 +311,7 @@ const _showItemHandler = (e, action) => {
       .split(" ")[0]
       .split(":");
     timeArr[0] = timeArr[0].length == 1 ? "0" + timeArr[0] : timeArr[0];
+    timeArr[1] = timeArr[1].length == 1 ? "0" + timeArr[1] : timeArr[1];
     timeArr = timeArr.join(":");
     dateIpt.value = dateVal + "T" + timeArr;
   }
