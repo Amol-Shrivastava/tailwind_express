@@ -295,7 +295,23 @@ const _showItemHandler = (e, action) => {
     dateIpt.classList.add("hidden");
     dateShowVal.classList.remove("hidden");
   } else if (action == "edit") {
-    dateIpt.value = selectedItem.completionDate;
+    // dateIpt.value = selectedItem.completionDate
+    //   .replace(", ", "T")
+    //   .replace("/", "-")
+    //   .split(" ")[0];
+    let dateArr = new Date(selectedItem.completionDate)
+      .toLocaleDateString()
+      .split("/")
+      .reverse();
+    dateArr[2] = dateArr[2].length == 1 ? "0" + dateArr[2] : dateArr[2];
+    let dateVal = dateArr.join("-");
+    let timeArr = new Date(selectedItem.completionDate)
+      .toLocaleTimeString()
+      .split(" ")[0]
+      .split(":");
+    timeArr[0] = timeArr[0].length == 1 ? "0" + timeArr[0] : timeArr[0];
+    timeArr = timeArr.join(":");
+    dateIpt.value = dateVal + "T" + timeArr;
   }
 };
 
