@@ -57,9 +57,15 @@ onload = async (event) => {
 
   if (success) {
     taskArr = msg;
-    // taskArr.forEach((element) => {
-    //   createListItems(element.title, element.status);
-    // });
+    // new Date(meet.date).toLocaleString();
+    taskArr = taskArr.map((el) =>
+      el.completionDate
+        ? {
+            ...el,
+            completionDate: new Date(el.completionDate).toLocaleString(),
+          }
+        : el
+    );
     for (let i = 0; i < taskArr.length; i++) {
       createListItems(taskArr[i].title, taskArr[i]._id, taskArr[i].status);
     }
@@ -120,9 +126,6 @@ newTaskForm.addEventListener("click", (e) => {
 
 //----LIST BOX CLICK
 list_box.addEventListener("click", (e) => {
-  let selectedItemTitle = null;
-  let selectedItem = null;
-
   if (e.target.id == "edit_task_btn") {
     blurIn(navBar);
     blurIn(mainContent);
@@ -143,7 +146,7 @@ list_box.addEventListener("click", (e) => {
     showForm(confirmationBox, "delete", taskSubmitBtn);
     selectedItemId =
       e.target.parentElement.parentElement.childNodes[2].innerText;
-  } else {
+  } else if (e.target.id != "list_box") {
     blurIn(navBar);
     blurIn(mainContent);
 
@@ -172,19 +175,17 @@ confirmationOKBtn.addEventListener("click", () => {
       `http://localhost:4000/tasks/update/${selectedItemId}`,
       "PATCH"
     );
-    location.reload();
   } else {
     _postNewTask(
       `http://localhost:4000/tasks/delete/${selectedItemId}`,
       "DELETE"
     );
-    location.reload();
   }
 
   hideForm(confirmationBox);
   hideForm(newTaskForm);
   clearForm([titleIpt, descIpt, dateIpt, task_status_selected]);
-  _loadAllList();
+  location.reload();
 });
 
 confirmationCancelBtn.addEventListener("click", () => {
@@ -230,6 +231,9 @@ const _editFormConfiguration = () => {
 
 const _postNewTask = async (url, METHOD) => {
   let options = null;
+  if (new Date(dateIpt.value) < Date.now()) {
+    alert("You cannot schedule a task for past date.");
+  }
   const formVal = {
     title: titleIpt.value,
     description: descIpt.value,
@@ -286,29 +290,12 @@ const _showItemHandler = (e, action) => {
   task_status_selected.innerText = selectedItem.status;
   statusIpt.value = selectedItem.status;
   if (action == "display") {
-    const dateVal = selectedItem.completionDate.replace("T", " ").split(" ")[0];
-    const timeVal = selectedItem.completionDate
-      .replace("T", " ")
-      .split(" ")[1]
-      .replace("Z", " ")
-      .split(" ")[0];
-
-    dateShowVal.value = dateVal + " " + timeVal;
+    dateShowVal.value = selectedItem.completionDate;
     dateShowVal.disabled = true;
     dateIpt.classList.add("hidden");
     dateShowVal.classList.remove("hidden");
   } else if (action == "edit") {
-    const dateVal = selectedItem.completionDate
-      .replace("T", " ")
-      .split(" ")[0]
-      .replace(":", "-");
-    const timeVal = selectedItem.completionDate
-      .replace("T", " ")
-      .split(" ")[1]
-      .replace("Z", " ")
-      .split(" ")[0];
-
-    dateIpt.value = dateVal + "T" + timeVal;
+    dateIpt.value = selectedItem.completionDate;
   }
 };
 
@@ -317,7 +304,14 @@ const _clearForm = () => {
   descIpt.value = null;
   statusIpt.value = null;
   dateIpt.value = null;
+
   dateShowVal.value = null;
+  titleIpt.disabled = false;
+  descIpt.disabled = false;
+  statusIpt.disabled = false;
+  dateIpt.disabled = false;
+  task_status_selected.classList.remove("hidden");
+  dateShowVal.classList.add("hidden");
 };
 
 const _editItemHandler = (e) => {};

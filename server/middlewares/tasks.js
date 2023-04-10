@@ -2,7 +2,8 @@ const { StatusCodes } = require("http-status-codes");
 const Tasks = require("../model/tasks");
 
 const createTask = async (req, res) => {
-  const { title, description, completionDate, status } = req.body;
+  let { title, description, completionDate, status } = req.body;
+
   const newTask = new Tasks({
     title,
     description,
@@ -10,6 +11,8 @@ const createTask = async (req, res) => {
     status,
     userId: req.session.userId,
   });
+  newTask.markModified("completionDate");
+
   try {
     await newTask.save();
     return res
@@ -89,6 +92,7 @@ const updateTask = async (req, res) => {
       task.description = description;
       task.status = status;
       task.completionDate = completionDate;
+      task.markModified("completionDate");
       await task.save();
       return res
         .status(StatusCodes.OK)
