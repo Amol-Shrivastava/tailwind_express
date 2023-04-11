@@ -6,6 +6,7 @@ import {
   blurIn,
   blurOut,
   createListItems,
+  removeListItems,
 } from "../util/domlib.js";
 import { apiCall } from "../util/routerCalls.js";
 import { clearForm, formatDate } from "../util/valueCheck.js";
@@ -17,6 +18,7 @@ const addTaskBtn = document.getElementById("addTasksBtn");
 // Page Elements
 const navBar = document.getElementById("navbar_dashboard");
 const mainContent = document.getElementById("mainContentContainer");
+const searchBar = document.getElementById("search_bar");
 
 //List Elements
 const list_box = document.getElementById("list_box");
@@ -75,6 +77,43 @@ onload = async (event) => {
 };
 
 logoutBtn.addEventListener("click", logoutUser);
+
+searchBar.addEventListener("input", searchHandler);
+
+//SEARCH HANDLER
+async function searchHandler(e) {
+  let qVal = e.target.value;
+  if (qVal) {
+    const res = await fetch(`http://localhost:4000/tasks/search/${qVal}`, {
+      METHOD: "GET",
+    });
+    const { success, msg } = await res.json();
+    if (success) {
+      taskArr = msg;
+    } else {
+      alert(msg);
+    }
+  } else {
+    const { success, msg } = await _loadAllList();
+
+    if (success) {
+      taskArr = msg;
+    }
+  }
+
+  taskArr = taskArr.map((el) =>
+    el.completionDate
+      ? {
+          ...el,
+          completionDate: new Date(el.completionDate).toLocaleString(),
+        }
+      : el
+  );
+  removeListItems("list_box");
+  for (let i = 0; i < taskArr.length; i++) {
+    createListItems(taskArr[i].title, taskArr[i]._id, taskArr[i].status);
+  }
+}
 
 //----FORM SHOW FORM HIDE
 addTaskBtn.addEventListener("click", () => {
@@ -227,53 +266,13 @@ const _editFormConfiguration = () => {
   dateShowVal.classList.add("hidden");
 };
 
-//CALL API
-
-const _postNewTask = async (url, METHOD) => {
-  let options = null;
-  if (new Date(dateIpt.value) < Date.now()) {
-    alert("You cannot schedule a task for past date.");
-  }
-  const formVal = {
-    title: titleIpt.value,
-    description: descIpt.value,
-    completionDate: new Date(dateIpt.value),
-    status: task_status_selected.innerHTML
-      ? task_status_selected.innerHTML
-      : statusIpt.value,
-  };
-
-  if (METHOD != "DELETE") {
-    options = {
-      method: METHOD,
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application.json",
-      },
-      body: JSON.stringify(formVal),
-    };
-  } else {
-    options = {
-      method: METHOD,
-    };
-  }
-
-  try {
-    const res = await apiCall(url, options);
-    const { success, msg } = await res.json();
-    alert(msg);
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-const _loadAllList = async () => {
+async function _loadAllList() {
   const res = await apiCall("http://localhost:4000/tasks", {
     method: "GET",
   });
   const { success, msg } = await res.json();
   return { success, msg };
-};
+}
 
 const _showItemHandler = (e, action) => {
   if (e.target.id == "edit_task_btn" || e.target.id == "delTaskBtn") {
@@ -329,4 +328,42 @@ const _clearForm = () => {
   dateShowVal.classList.add("hidden");
 };
 
-const _editItemHandler = (e) => {};
+//CALL API
+
+const _postNewTask = async (url, METHOD) => {
+  let options = null;
+  if (new Date(dateIpt.value) < Date.now()) {
+    alert("You cannot schedule a task for past date.");
+  }
+  const formVal = {
+    title: titleIpt.value,
+    description: descIpt.value,
+    completionDate: new Date(dateIpt.value),
+    status: task_status_selected.innerHTML
+      ? task_status_selected.innerHTML
+      : statusIpt.value,
+  };
+
+  if (METHOD != "DELETE") {
+    options = {
+      method: METHOD,
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application.json",
+      },
+      body: JSON.stringify(formVal),
+    };
+  } else {
+    options = {
+      method: METHOD,
+    };
+  }
+
+  try {
+    const res = await apiCall(url, options);
+    const { success, msg } = await res.json();
+    alert(msg);
+  } catch (error) {
+    console.log(error);
+  }
+};

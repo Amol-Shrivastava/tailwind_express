@@ -120,6 +120,31 @@ const deleteTasks = async (req, res) => {
   }
 };
 
+const searchTask = async (req, res) => {
+  let { query } = req.params;
+  let userId = req.session.userId;
+
+  if (query) {
+    query = query.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+    query = new RegExp(query, "gi");
+  }
+  try {
+    const taskArr = await Tasks.find({ title: query, userId }).limit(10);
+    if (taskArr && taskArr.length > 0) {
+      return res.status(StatusCodes.OK).json({ success: true, msg: taskArr });
+    } else {
+      return res.status(StatusCodes.NOT_FOUND).json({
+        success: false,
+        msg: "Couldn't find any tasks with the given query",
+      });
+    }
+  } catch (error) {
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ success: false, msg: error.message });
+  }
+};
+
 const convertToClosed = async () => {
   return await Tasks.updateMany(
     {
@@ -136,5 +161,6 @@ module.exports = {
   updateTask,
   findTasks,
   deleteTasks,
+  searchTask,
   convertToClosed,
 };

@@ -195,6 +195,10 @@ const createFormDiv = ({ title, description, status, completionDate }) => {
   formBox.insertAdjacentElement("afterbegin", targetDiv);
 };
 
+const removeListItems = (ul_id) => {
+  document.getElementById(ul_id).innerHTML = "";
+};
+
 export {
   showErrorMsg,
   suggestionErrorEl,
@@ -208,4 +212,5 @@ export {
   blurOut,
   createListItems,
   createFormDiv,
+  removeListItems,
 };

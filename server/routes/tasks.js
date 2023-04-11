@@ -4,6 +4,7 @@ const {
   updateTask,
   deleteTasks,
   findAllTasks,
+  searchTask,
 } = require("../middlewares/tasks");
 
 const router = require("express").Router();
@@ -11,6 +12,7 @@ const router = require("express").Router();
 router
   .get("/", findAllTasks)
   .post("/create", createTask)
+  .get("/search/:query", searchTask)
   .get("/:value/:userId", findTasks)
   .patch("/update/:id", updateTask)
   .delete("/delete/:id", deleteTasks);
