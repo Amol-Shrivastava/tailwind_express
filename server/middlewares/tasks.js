@@ -120,10 +120,21 @@ const deleteTasks = async (req, res) => {
   }
 };
 
+const convertToClosed = async () => {
+  return await Tasks.updateMany(
+    {
+      status: { $ne: "CLOSED" },
+      createdAt: { $lte: Date.now() },
+    },
+    { status: "TIME'S UP" }
+  );
+};
+
 module.exports = {
   createTask,
   findAllTasks,
   updateTask,
   findTasks,
   deleteTasks,
+  convertToClosed,
 };

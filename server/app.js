@@ -13,6 +13,7 @@ const regRouter = require("./routes/authentication");
 // const { authenticationHandler } = require("./middlewares/authentication");
 const contentRouter = require("./routes/content");
 const tasksRouter = require("./routes/tasks");
+const { convertToClosed } = require("./middlewares/tasks");
 
 const PORT = process.env.PORT || 4000;
 
@@ -56,6 +57,7 @@ const start = async () => {
     //1. start DB
     await connectDB(process.env.MONGOOSE_URI);
     consola.success(`Successfully connected to DB`);
+    convertToClosed();
 
     //2. Start Server
     app.listen(PORT, (err) => {

@@ -17,7 +17,7 @@ const taskSchema = new Schema(
     status: {
       type: String,
       enum: {
-        values: ["OPEN", "WIP", "CLOSED"],
+        values: ["OPEN", "WIP", "CLOSED", "TIME'S UP"],
         message: "{VALUE} is not supported",
         default: "OPEN",
       },

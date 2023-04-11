@@ -295,10 +295,6 @@ const _showItemHandler = (e, action) => {
     dateIpt.classList.add("hidden");
     dateShowVal.classList.remove("hidden");
   } else if (action == "edit") {
-    // dateIpt.value = selectedItem.completionDate
-    //   .replace(", ", "T")
-    //   .replace("/", "-")
-    //   .split(" ")[0];
     let dateArr = new Date(selectedItem.completionDate)
       .toLocaleDateString()
       .split("/")
@@ -322,6 +318,7 @@ const _clearForm = () => {
   descIpt.value = null;
   statusIpt.value = null;
   dateIpt.value = null;
+  task_status_selected.value = "OPEN";
 
   dateShowVal.value = null;
   titleIpt.disabled = false;
