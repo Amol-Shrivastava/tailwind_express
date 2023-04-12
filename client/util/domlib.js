@@ -85,11 +85,12 @@ const hideForm = (el) => {
 };
 
 const blurIn = (el) => {
-  el.classList.add("blur-md");
+  el.classList.add("blur-md", "pointer-events-none");
 };
 
 const blurOut = (el) => {
   el.classList.remove("blur-md");
+  el.classList.remove("pointer-events-none");
 };
 
 const createListItems = (title, id, status) => {
@@ -199,6 +200,42 @@ const removeListItems = (ul_id) => {
   document.getElementById(ul_id).innerHTML = "";
 };
 
+const addWaitingDiv = () => {
+  let pDiv = document.createElement("p");
+  pDiv.innerText = "WAITING...";
+  pDiv.classList.add(
+    "absolute",
+    "top-3/4",
+    "left-2/4",
+    "-translate-x-2/4",
+    "-translate-y-2/4",
+    "w-[150px]",
+    "h-[70px]",
+    "flex",
+    "align-middle",
+    "justify-center",
+    "text-gray-800",
+    "bg-white",
+    "z-[800]",
+    "rounded-md",
+    "py-4"
+  );
+  pDiv.setAttribute("id", "waiting_div");
+  document.getElementsByTagName("body")[0].classList.add("relative");
+  document
+    .getElementsByTagName("body")[0]
+    .insertAdjacentElement("beforeend", pDiv);
+  blurIn(document.getElementsByTagName("content")[0]);
+};
+
+const removeWaitingDiv = () => {
+  if (document.getElementById("waiting_div")) {
+    document.getElementById("waiting_div").remove();
+    blurOut(document.getElementsByTagName("content")[0]);
+    document.getElementsByTagName("body")[0].classList.remove("relative");
+  }
+};
+
 export {
   showErrorMsg,
   suggestionErrorEl,
@@ -213,4 +250,6 @@ export {
   createListItems,
   createFormDiv,
   removeListItems,
+  addWaitingDiv,
+  removeWaitingDiv,
 };

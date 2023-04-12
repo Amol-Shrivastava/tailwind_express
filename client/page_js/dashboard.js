@@ -7,6 +7,8 @@ import {
   blurOut,
   createListItems,
   removeListItems,
+  addWaitingDiv,
+  removeWaitingDiv,
 } from "../util/domlib.js";
 import { apiCall } from "../util/routerCalls.js";
 import { clearForm, formatDate } from "../util/valueCheck.js";
@@ -56,7 +58,7 @@ onload = async (event) => {
   }
 
   const { success, msg } = await _loadAllList();
-
+  addWaitingDiv();
   if (success) {
     taskArr = msg;
     // new Date(meet.date).toLocaleString();
@@ -68,10 +70,12 @@ onload = async (event) => {
           }
         : el
     );
+    removeWaitingDiv();
     for (let i = 0; i < taskArr.length; i++) {
       createListItems(taskArr[i].title, taskArr[i]._id, taskArr[i].status);
     }
   } else {
+    removeWaitingDiv();
     alert(msg);
   }
 };
@@ -88,6 +92,7 @@ async function searchHandler(e) {
       METHOD: "GET",
     });
     const { success, msg } = await res.json();
+    addWaitingDiv();
     if (success) {
       taskArr = msg;
     } else {
@@ -109,6 +114,7 @@ async function searchHandler(e) {
         }
       : el
   );
+  removeWaitingDiv();
   removeListItems("list_box");
   for (let i = 0; i < taskArr.length; i++) {
     createListItems(taskArr[i].title, taskArr[i]._id, taskArr[i].status);
@@ -171,7 +177,7 @@ list_box.addEventListener("click", (e) => {
 
     formTitle.innerHTML = "Edit Task";
     _editFormConfiguration();
-    _editItemHandler(e);
+    // _editItemHandler(e);
     dateIpt.classList.remove("hidden");
     _showItemHandler(e, "edit");
     showForm(newTaskForm, "edit", taskSubmitBtn);
@@ -208,22 +214,27 @@ confirmationOKBtn.addEventListener("click", () => {
 
   if (submitAction == "add") {
     _postNewTask("http://localhost:4000/tasks/create", "POST");
+    addWaitingDiv();
   } else if (submitAction == "edit") {
     console.log(selectedItemId);
     _postNewTask(
       `http://localhost:4000/tasks/update/${selectedItemId}`,
       "PATCH"
     );
+    addWaitingDiv();
   } else {
     _postNewTask(
       `http://localhost:4000/tasks/delete/${selectedItemId}`,
       "DELETE"
     );
+    addWaitingDiv();
   }
 
+  removeWaitingDiv();
   hideForm(confirmationBox);
   hideForm(newTaskForm);
   clearForm([titleIpt, descIpt, dateIpt, task_status_selected]);
+  blurOut(mainContent);
   location.reload();
 });
 
@@ -317,7 +328,7 @@ const _clearForm = () => {
   descIpt.value = null;
   statusIpt.value = null;
   dateIpt.value = null;
-  task_status_selected.value = "OPEN";
+  task_status_selected.innerText = "OPEN";
 
   dateShowVal.value = null;
   titleIpt.disabled = false;

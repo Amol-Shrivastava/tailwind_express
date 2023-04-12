@@ -29,7 +29,8 @@ const findAllTasks = async (req, res) => {
   const userId = req.session.userId;
   try {
     if (userId) {
-      const tasksArr = await Tasks.find({ userId }).sort({ createdAt: -1 });
+      convertToClosed();
+      const tasksArr = await Tasks.find({ userId }).sort("-createdAt").limit(5);
       if (tasksArr.length > 0) {
         return res
           .status(StatusCodes.OK)
@@ -129,7 +130,13 @@ const searchTask = async (req, res) => {
     query = new RegExp(query, "gi");
   }
   try {
-    const taskArr = await Tasks.find({ title: query, userId }).limit(10);
+    let taskArr = await Tasks.find({
+      $or: [{ title: query }, { description: query }],
+      userId,
+    })
+      .sort("-createdAt")
+      .limit(5);
+    taskArr = [...new Set(taskArr)];
     if (taskArr && taskArr.length > 0) {
       return res.status(StatusCodes.OK).json({ success: true, msg: taskArr });
     } else {
@@ -148,7 +155,7 @@ const searchTask = async (req, res) => {
 const convertToClosed = async () => {
   return await Tasks.updateMany(
     {
-      status: { $ne: "CLOSED" },
+      status: { $nin: ["CLOSED", "TIME'S UP"] },
       createdAt: { $lte: Date.now() },
     },
     { status: "TIME'S UP" }
