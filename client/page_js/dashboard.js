@@ -21,6 +21,7 @@ const addTaskBtn = document.getElementById("addTasksBtn");
 const navBar = document.getElementById("navbar_dashboard");
 const mainContent = document.getElementById("mainContentContainer");
 const searchBar = document.getElementById("search_bar");
+const loadMoreBtn = document.getElementById("load_more");
 
 //List Elements
 const list_box = document.getElementById("list_box");
@@ -50,6 +51,7 @@ const task_optionsList = document.getElementById("options_list");
 let selectedItemId = null;
 
 let taskArr = null;
+let page = 1;
 
 onload = async (event) => {
   if (localStorage.getItem("username")) {
@@ -340,7 +342,6 @@ const _clearForm = () => {
 };
 
 //CALL API
-
 const _postNewTask = async (url, METHOD) => {
   let options = null;
   if (new Date(dateIpt.value) < Date.now()) {
@@ -378,3 +379,39 @@ const _postNewTask = async (url, METHOD) => {
     console.log(error);
   }
 };
+
+const loadMore = async (e) => {
+  if (e.target.id == "load_more") {
+    const res = await fetch(
+      `http://localhost:4000/tasks/loadMore?page=${page}`,
+      {
+        METHOD: "GET",
+      }
+    );
+    const { success, msg } = await res.json();
+    if (success) {
+      taskArr = [...taskArr, ...msg];
+
+      taskArr = taskArr.map((el) =>
+        el.completionDate
+          ? {
+              ...el,
+              completionDate: new Date(el.completionDate).toLocaleString(),
+            }
+          : el
+      );
+
+      removeListItems("list_box");
+      for (let i = 0; i < taskArr.length; i++) {
+        createListItems(taskArr[i].title, taskArr[i]._id, taskArr[i].status);
+      }
+    } else {
+      alert(msg);
+      document.getElementById("load_more").classList.add("hidden");
+    }
+
+    page++;
+  }
+};
+
+loadMoreBtn.addEventListener("click", loadMore);

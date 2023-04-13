@@ -26,7 +26,7 @@
     <content class="block mx-auto md:grid my-8 md:mx-2 md:grid-cols-4 relative">
       
       <!-- Search box and listItems -->
-     <div class="md:flex md:flex-col md:col-start-2 md:col-end-4" id="mainContentContainer">
+     <div class="md:flex md:flex-col md:col-start-2 md:col-end-4 md:relative" id="mainContentContainer">
 
         <!-- search box and add new task button -->
         <div class="mb-8 mx-2 flex flex-col md:flex-row md:justify-around" id="search_bar_cont">
@@ -39,6 +39,9 @@
         <div id="tasks_list">
           <ul class="list-disc mx-2" id="list_box"></ul>
         </div>
+
+        <!-- Load More -->
+        <button id="load_more" class="px-4 py-1.5 block bg-blue-500 text-gray-100 rounded-md hover:bg-orange-400 cursor-pointer mx-auto md:absolute md:-bottom-[50px] md:left-2/4 md:-translate-x-2/4">Load More</button>
 
 
         

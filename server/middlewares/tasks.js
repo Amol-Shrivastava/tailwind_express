@@ -162,6 +162,29 @@ const convertToClosed = async () => {
   );
 };
 
+const loadMoreTasks = async (req, res) => {
+  const userId = req.session.userId;
+  let page = parseInt(req.query.page) || 1;
+  let tasksPerPage = 5;
+  try {
+    const tasksArr = await Tasks.find({ userId })
+      .sort("-createdAt")
+      .skip(page * tasksPerPage)
+      .limit(tasksPerPage);
+    if (tasksArr && tasksArr.length > 0) {
+      return res.status(StatusCodes.OK).json({ success: true, msg: tasksArr });
+    } else {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ success: false, msg: "No more to tasks to load." });
+    }
+  } catch (error) {
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ success: false, msg: error.message });
+  }
+};
+
 module.exports = {
   createTask,
   findAllTasks,
@@ -170,4 +193,5 @@ module.exports = {
   deleteTasks,
   searchTask,
   convertToClosed,
+  loadMoreTasks,
 };
