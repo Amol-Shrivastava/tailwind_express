@@ -64,20 +64,10 @@ onload = async (event) => {
   if (success) {
     taskArr = msg;
     // new Date(meet.date).toLocaleString();
-    taskArr = taskArr.map((el) =>
-      el.completionDate
-        ? {
-            ...el,
-            completionDate: new Date(el.completionDate).toLocaleString(),
-          }
-        : el
-    );
-    removeWaitingDiv();
-    for (let i = 0; i < taskArr.length; i++) {
-      createListItems(taskArr[i].title, taskArr[i]._id, taskArr[i].status);
-    }
+    makeListItems(taskArr);
   } else {
     removeWaitingDiv();
+    loadMoreBtn.classList.add("hidden");
     alert(msg);
   }
 };
@@ -108,19 +98,7 @@ async function searchHandler(e) {
     }
   }
 
-  taskArr = taskArr.map((el) =>
-    el.completionDate
-      ? {
-          ...el,
-          completionDate: new Date(el.completionDate).toLocaleString(),
-        }
-      : el
-  );
-  removeWaitingDiv();
-  removeListItems("list_box");
-  for (let i = 0; i < taskArr.length; i++) {
-    createListItems(taskArr[i].title, taskArr[i]._id, taskArr[i].status);
-  }
+  makeListItems(taskArr);
 }
 
 //----FORM SHOW FORM HIDE
@@ -392,19 +370,7 @@ const loadMore = async (e) => {
     if (success) {
       taskArr = [...taskArr, ...msg];
 
-      taskArr = taskArr.map((el) =>
-        el.completionDate
-          ? {
-              ...el,
-              completionDate: new Date(el.completionDate).toLocaleString(),
-            }
-          : el
-      );
-
-      removeListItems("list_box");
-      for (let i = 0; i < taskArr.length; i++) {
-        createListItems(taskArr[i].title, taskArr[i]._id, taskArr[i].status);
-      }
+      makeListItems(taskArr);
     } else {
       alert(msg);
       document.getElementById("load_more").classList.add("hidden");
@@ -415,3 +381,19 @@ const loadMore = async (e) => {
 };
 
 loadMoreBtn.addEventListener("click", loadMore);
+
+const makeListItems = (taskArr) => {
+  taskArr = taskArr.map((el) =>
+    el.completionDate
+      ? {
+          ...el,
+          completionDate: new Date(el.completionDate).toLocaleString(),
+        }
+      : el
+  );
+  removeWaitingDiv();
+  removeListItems("list_box");
+  for (let i = 0; i < taskArr.length; i++) {
+    createListItems(taskArr[i].title, taskArr[i]._id, taskArr[i].status);
+  }
+};

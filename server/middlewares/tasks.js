@@ -30,7 +30,7 @@ const findAllTasks = async (req, res) => {
   try {
     if (userId) {
       let tasksArr = await Tasks.find({ userId }).sort("-createdAt").limit(5);
-      tasksArr = convertToClosed(tasksArr);
+      tasksArr = await convertToClosed(tasksArr);
       if (tasksArr.length > 0) {
         return res
           .status(StatusCodes.OK)
@@ -162,9 +162,11 @@ const convertToClosed = async (tasksArr = null) => {
       { status: "TIME'S UP" }
     );
   } else {
-    return tasksArr.map((el) =>
-      el.completionDate < Date.now() ? { ...el, status: "TIME'S UP" } : el
+    const newArr = tasksArr.map((el) =>
+      el.completionDate < Date.now() ? { ...el, status: "TIME'S UP" }._doc : el
     );
+
+    return newArr;
   }
 };
 
